@@ -139,7 +139,7 @@ function ListarLi(inputFile, sizeCompact, porcentagem, blob){
         <div class="flex items-center ">
             <img class="w-32 md:mr-5 mr-2 aspect-square object-cover" src="${URL.createObjectURL(blob)}" >
             <p class="">
-                <b>NOME</b>: ${inputFile.name} <br> <b> ANTES</b>: ${SizeFile(inputFile)}  <br> <b> DEPOIS</b>: ${sizeCompact} KB  <br> <b> NIVEL</b>: ${textSizeColor(inputFile.size.toFixed(2), sizeCompact)}
+                <b>NOME</b>: <span title="${inputFile.name}">${limitarCaracteres(inputFile.name)}</span> <br> <b> ANTES</b>: ${SizeFile(inputFile)}  <br> <b> DEPOIS</b>: ${sizeCompact} KB  <br> <b> NIVEL</b>: ${textSizeColor(inputFile.size.toFixed(2), sizeCompact)}
             </p>
         </div>
 
@@ -155,6 +155,21 @@ function ListarLi(inputFile, sizeCompact, porcentagem, blob){
     </li>`
 
 
+}
+
+function limitarCaracteres(elemento) {
+    let larguraTela = window.innerWidth;
+    let maxCaracteres = (larguraTela < 720) ? 14 : 50;
+    if(maxCaracteres == 50){
+        return elemento
+    }
+    
+    let texto = elemento
+
+    if (texto.length > maxCaracteres) {
+        // Trunca o texto se exceder o limite
+        return texto.substring(0, maxCaracteres) + '...';
+    }
 }
 
 
