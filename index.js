@@ -141,7 +141,7 @@ function ListarLi(inputFile, sizeCompact, porcentagem, blob){
             </div>
         </div>
 
-        <button class="bg-blue-600 px-4 py-2 rounded-md text-white absolute bottom-1 md:right-1 left-1 md:left-auto" onclick="downloadOne('${URL.createObjectURL(blob)}')">
+        <button class="bg-blue-600 hover:bg-blue-500 hover:shadow-md px-4 py-2 rounded-md text-white absolute bottom-1 md:right-1 left-1 md:left-auto" onclick="downloadOne('${URL.createObjectURL(blob)}')">
             Download
         </button>
     </li>`
