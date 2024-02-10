@@ -3,31 +3,46 @@ let fileName = ''
 let weightOriginal = 0
 let weightCompact = 0
 let percentage = 0
+let imagens = []
 
-document.getElementById('compressBtn').addEventListener('click', function() {
-    var inputFile = document.getElementById('inputFile').files[0];
-    if (inputFile) {
-        //obter nome do arquivo
-        fileName = inputFile.name
+function Comprimir() {
+    try {        
+        let inputFiles = document.getElementById('fileInput').files;
+    
+        if (inputFiles.length > 0) {
+            for (let i = 0; i < inputFiles.length; i++) {
+                let inputFile = inputFiles[i];
+    
+                //obter nome do arquivo
+                fileName = inputFile.name
+    
+                // Obtendo o tamanho do arquivo original em KB
+                SizeFile(inputFile)
+    
+                Render(inputFiles[i])
+            
+            }
+        } else {
+            alert('Selecione um arquivo de imagem.');
+        }
+    } catch (error) {
+        console.log('Erro ao comprimir imagem')
+    }
+}
 
-
-        // Obtendo o tamanho do arquivo original em KB
-        var originalSizeInKB = inputFile.size / 1024;
-        console.log('Tamanho do arquivo original: ' + originalSizeInKB.toFixed(2) + ' KB');
-        weightOriginal = originalSizeInKB
-
-
-        var reader = new FileReader();
+function Render(inputFiles){
+    try{
+        let reader = new FileReader();
         reader.onload = function(event) {
-            var img = new Image();
+            let img = new Image();
             img.src = event.target.result;
-
+    
             img.onload = function() {
-                var maxWidth = 800; // Largura máxima permitida
-                var maxHeight = 600; // Altura máxima permitida
-                var width = img.width;
-                var height = img.height;
-
+                let maxWidth = 800; // Largura máxima permitida
+                let maxHeight = 600; // Altura máxima permitida
+                let width = img.width;
+                let height = img.height;
+    
                 if (width > height) {
                     if (width > maxWidth) {
                         height *= maxWidth / width;
@@ -39,36 +54,75 @@ document.getElementById('compressBtn').addEventListener('click', function() {
                         height = maxHeight;
                     }
                 }
-
-                var canvas = document.createElement('canvas');
-                var ctx = canvas.getContext('2d');
+    
+                let canvas = document.createElement('canvas');
+                let ctx = canvas.getContext('2d');
                 canvas.width = width;
                 canvas.height = height;
                 ctx.drawImage(img, 0, 0, width, height);
-
+    
                 canvas.toBlob(function(blob) {
                     // Obtendo o tamanho do blob em KB
-                    var fileSizeInKB = blob.size / 1024; // tamanho em KB
-                    console.log('Tamanho da imagem comprimida: ' + fileSizeInKB.toFixed(2) + ' KB');
+                    let fileSizeInKB = blob.size / 1024; // tamanho em KB
                     weightCompact = fileSizeInKB
-
-
+                    
+                    
                     //porgentagem de compactação
                     percentage = ((weightOriginal - weightCompact) / weightOriginal) * 100;
+                    
+                    // Adicionando a imagem compactada ao array
+                    imagens.push(blob)
+                    
+                    console.log('Tamanho da imagem comprimida: ' + fileSizeInKB.toFixed(2) + ' KB');
                     console.log('Compactação: ' + percentage.toFixed(2) + ' %');
-
-                    //download da imagem compactada
-                    var downloadLink = document.createElement('a');
-                    downloadLink.href = URL.createObjectURL(blob);
-                    downloadLink.download = fileName;
-                    downloadLink.click();
+                    ListarLi(inputFiles, `${fileSizeInKB.toFixed(2)} KB`, `${percentage.toFixed(2)} %`)
+        
                 }, 'image/jpeg', levelCompact);
             };
         };
-        reader.readAsDataURL(inputFile);
-
-
-    } else {
-        alert('Selecione um arquivo de imagem.');
+        reader.readAsDataURL(inputFiles);
+       
     }
-});
+    catch(erro){
+        console.log('Erro ao renderizar imagem')
+    }
+
+}
+function Download(){
+    try{
+        if(imagens.length > 0){
+
+            imagens.forEach((e)=>{
+                let downloadLink = document.createElement('a');
+                downloadLink.href = URL.createObjectURL(e);
+                downloadLink.download = fileName;
+                downloadLink.click();
+    
+            })
+        }else{
+            alert('Sem imagens a serem compactadas, por favor faça UPLOAD!')
+        }
+    }catch(erro){
+        console.log('Erro ao fazer download')
+    }
+}
+function SizeFile(inputFile){
+    try {
+        let originalSizeInKB = inputFile.size / 1024;
+        console.log('Tamanho do arquivo original: ' + originalSizeInKB.toFixed(2) + ' KB');
+        weightOriginal = originalSizeInKB
+        return `${originalSizeInKB.toFixed(2)} KB`
+    } catch (error) {
+        console.log('Erro na função SizeFile')
+    }
+}
+function ListarLi(inputFile, sizeCompact, porcentagem){
+    document.getElementById('texttInfo').classList.remove('hidden')
+    let listaImagens = document.getElementById('listaImagens')
+    listaImagens.innerHTML += `<li><b>NOME</b>: ${inputFile.name} | <b>ANTES</b>: ${SizeFile(inputFile)} | <b>DEPOIS</b>: ${sizeCompact} | <b>NIVEL</b>: ${porcentagem} </li>`
+}
+
+
+document.getElementById('fileInput').addEventListener('change', ()=>{
+    Comprimir()
+})
