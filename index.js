@@ -132,18 +132,23 @@ function ListarLi(inputFile, sizeCompact, porcentagem, blob){
     document.getElementById('texttInfo').classList.remove('hidden')
     let listaImagens = document.getElementById('listaImagens')
     listaImagens.innerHTML += `
-    <li class="list-none border  rounded-md shadow-md bg-gray-50 relative  w-full">
-        <div class="flex items-center">
-            <img class="w-28 mr-5 aspect-square object-cover" src="${URL.createObjectURL(blob)}" >
-            <div>
-            
-            <b>NOME</b>: ${inputFile.name} <br> <b> ANTES</b>: ${SizeFile(inputFile)}  <br> <b> DEPOIS</b>: ${sizeCompact}  <br> <b> NIVEL</b>: ${porcentagem} 
-            </div>
+    <li class="list-none border  rounded-md shadow-md bg-gray-50 relative  w-full overflow-hidden">
+        <div class="flex items-center ">
+            <img class="w-32 md:mr-5 mr-2 aspect-square object-cover" src="${URL.createObjectURL(blob)}" >
+            <p class="">
+                <b>NOME</b>: ${inputFile.name} <br> <b> ANTES</b>: ${SizeFile(inputFile)}  <br> <b> DEPOIS</b>: ${sizeCompact}  <br> <b> NIVEL</b>: ${porcentagem} 
+            </p>
         </div>
 
-        <button class="bg-blue-600 hover:bg-blue-500 hover:shadow-md px-4 py-2 rounded-md text-white absolute bottom-1 md:right-1 left-1 md:left-auto" onclick="downloadOne('${URL.createObjectURL(blob)}')">
-            Download
-        </button>
+        <div class=" border bg-gray-100 p-2 w-full h-auto items-center justify-end flex space-x-2">
+
+            <button class="bg-blue-600 hover:bg-blue-500 hover:shadow-md px-4 py-2 rounded-md text-white  " onclick="downloadOne('${URL.createObjectURL(blob)}')">
+                Download
+            </button>
+            <button class="bg-red-600 hover:bg-red-500 hover:shadow-md px-4 py-2 rounded-md text-white  " onclick="removeItem(this)">
+                Remover
+            </button>
+        </div>
     </li>`
 
 
@@ -154,3 +159,12 @@ document.getElementById('fileInput').addEventListener('change', ()=>{
     Comprimir()
     document.getElementById('compressBtn').classList.remove('hidden')
 })
+
+
+function removeItem(button) {
+    // Obtém o elemento li pai do botão clicado
+    var listItem = button.closest('li');
+
+    // Remove o elemento li
+    listItem.remove();
+}
