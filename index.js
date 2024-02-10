@@ -75,7 +75,7 @@ function Render(inputFiles){
                     
                     console.log('Tamanho da imagem comprimida: ' + fileSizeInKB.toFixed(2) + ' KB');
                     console.log('Compactação: ' + percentage.toFixed(2) + ' %');
-                    ListarLi(inputFiles, `${fileSizeInKB.toFixed(2)} KB`, `${percentage.toFixed(2)} %`)
+                    ListarLi(inputFiles, `${fileSizeInKB.toFixed(2)} KB`, `${percentage.toFixed(2)} %`, blob)
         
                 }, 'image/jpeg', levelCompact);
             };
@@ -106,6 +106,18 @@ function Download(){
         console.log('Erro ao fazer download')
     }
 }
+function downloadOne(url) {
+    try {
+        let downloadLink = document.createElement('a');
+        downloadLink.href = url;
+        downloadLink.download = "nome_do_arquivo";  // Substitua "nome_do_arquivo" pelo nome desejado
+        downloadLink.click();
+    } catch (erro) {
+        console.log('Erro ao fazer download');
+    }
+}
+
+
 function SizeFile(inputFile){
     try {
         let originalSizeInKB = inputFile.size / 1024;
@@ -116,13 +128,29 @@ function SizeFile(inputFile){
         console.log('Erro na função SizeFile')
     }
 }
-function ListarLi(inputFile, sizeCompact, porcentagem){
+function ListarLi(inputFile, sizeCompact, porcentagem, blob){
     document.getElementById('texttInfo').classList.remove('hidden')
     let listaImagens = document.getElementById('listaImagens')
-    listaImagens.innerHTML += `<li><b>NOME</b>: ${inputFile.name} | <b>ANTES</b>: ${SizeFile(inputFile)} | <b>DEPOIS</b>: ${sizeCompact} | <b>NIVEL</b>: ${porcentagem} </li>`
+    listaImagens.innerHTML += `
+    <li class="list-none border  rounded-md shadow-md bg-gray-50 relative  w-full">
+        <div class="flex items-center">
+            <img class="w-28 mr-5 aspect-square object-cover" src="${URL.createObjectURL(blob)}" >
+            <div>
+            
+            <b>NOME</b>: ${inputFile.name} <br> <b> ANTES</b>: ${SizeFile(inputFile)}  <br> <b> DEPOIS</b>: ${sizeCompact}  <br> <b> NIVEL</b>: ${porcentagem} 
+            </div>
+        </div>
+
+        <button class="bg-blue-600 px-4 py-2 rounded-md text-white absolute bottom-1 md:right-1 left-1 md:left-auto" onclick="downloadOne('${URL.createObjectURL(blob)}')">
+            Download
+        </button>
+    </li>`
+
+
 }
 
 
 document.getElementById('fileInput').addEventListener('change', ()=>{
     Comprimir()
+    document.getElementById('compressBtn').classList.remove('hidden')
 })
