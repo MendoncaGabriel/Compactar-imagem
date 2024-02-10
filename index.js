@@ -75,7 +75,7 @@ function Render(inputFiles){
                     
                     console.log('Tamanho da imagem comprimida: ' + fileSizeInKB.toFixed(2) + ' KB');
                     console.log('Compactação: ' + percentage.toFixed(2) + ' %');
-                    ListarLi(inputFiles, `${fileSizeInKB.toFixed(2)} KB`, `${percentage.toFixed(2)} %`, blob)
+                    ListarLi(inputFiles, `${fileSizeInKB.toFixed(2)}`, `${percentage.toFixed(2)}`, blob)
         
                 }, 'image/jpeg', levelCompact);
             };
@@ -118,16 +118,19 @@ function downloadOne(url) {
 }
 
 
-function SizeFile(inputFile){
+function SizeFile(inputFile) {
     try {
         let originalSizeInKB = inputFile.size / 1024;
-        console.log('Tamanho do arquivo original: ' + originalSizeInKB.toFixed(2) + ' KB');
-        weightOriginal = originalSizeInKB
-        return `${originalSizeInKB.toFixed(2)} KB`
+        let sizeString = `${originalSizeInKB.toFixed(2)} KB`;
+        console.log('Tamanho do arquivo original: ' + sizeString);
+        weightOriginal = originalSizeInKB;
+        return sizeString;
     } catch (error) {
-        console.log('Erro na função SizeFile')
+        console.log('Erro na função SizeFile', error);
+        return 'Erro no tamanho do arquivo';
     }
 }
+
 function ListarLi(inputFile, sizeCompact, porcentagem, blob){
     document.getElementById('texttInfo').classList.remove('hidden')
     let listaImagens = document.getElementById('listaImagens')
@@ -136,7 +139,7 @@ function ListarLi(inputFile, sizeCompact, porcentagem, blob){
         <div class="flex items-center ">
             <img class="w-32 md:mr-5 mr-2 aspect-square object-cover" src="${URL.createObjectURL(blob)}" >
             <p class="">
-                <b>NOME</b>: ${inputFile.name} <br> <b> ANTES</b>: ${SizeFile(inputFile)}  <br> <b> DEPOIS</b>: ${sizeCompact}  <br> <b> NIVEL</b>: ${porcentagem} 
+                <b>NOME</b>: ${inputFile.name} <br> <b> ANTES</b>: ${SizeFile(inputFile)}  <br> <b> DEPOIS</b>: ${sizeCompact} KB  <br> <b> NIVEL</b>: ${textSizeColor(inputFile.size.toFixed(2), sizeCompact)}
             </p>
         </div>
 
@@ -168,3 +171,36 @@ function removeItem(button) {
     // Remove o elemento li
     listItem.remove();
 }
+function textSizeColor(originalSize, compactSize) {
+    let valorEmBytes = originalSize;
+    let valorEmKB = valorEmBytes / 1024;
+    console.log(valorEmKB.toFixed(2) + ' KB');
+
+    console.log(originalSize, compactSize)
+    try {
+        let originalSizeInKB = parseFloat(valorEmKB);
+        let compactSizeInKB = parseFloat(compactSize);
+
+        if (!isNaN(originalSizeInKB) && !isNaN(compactSizeInKB)) {
+            let percentage = ((originalSizeInKB - compactSizeInKB) / originalSizeInKB) * 100;
+
+            if (percentage >= 5 && percentage <= 10) {
+                return `<span class="px-2 text-white py-px font-semibold   rounded-md bg-red-600" w-auto;">${percentage.toFixed(2)}%</span>`;
+            } else if (percentage > 10 && percentage <= 50) {
+                return `<span class="px-2 text-white py-px font-semibold   rounded-md bg-yellow-600" w-auto;">${percentage.toFixed(2)}%</span>`;
+            } else if (percentage > 50) {
+                return `<span class="px-2 text-white py-px font-semibold  rounded-md bg-green-600" w-auto;">${percentage.toFixed(2)}%</span>`;
+            } else {
+                return `<span class="px-2 text-white py-px font-semibold   rounded-md bg-gray-600" w-auto;">0.00%</span>`;
+            }
+        } else {
+            return `<span class="text-gray-600">Erro nos tamanhos</span> `;
+        }
+    } catch (error) {
+        console.log('Erro ao calcular diferença percentual', error);
+        return `<span class="text-gray-600">Erro ao calcular</span>`;
+    }
+}
+
+
+
