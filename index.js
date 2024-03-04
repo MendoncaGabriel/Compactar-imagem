@@ -106,11 +106,11 @@ function Download(){
         console.log('Erro ao fazer download')
     }
 }
-function downloadOne(url) {
+function downloadOne(url, name) {
     try {
         let downloadLink = document.createElement('a');
         downloadLink.href = url;
-        downloadLink.download = "nome_do_arquivo";  // Substitua "nome_do_arquivo" pelo nome desejado
+        downloadLink.download = name || 'Imagem compactada!'
         downloadLink.click();
     } catch (erro) {
         console.log('Erro ao fazer download');
@@ -145,7 +145,7 @@ function ListarLi(inputFile, sizeCompact, porcentagem, blob){
 
         <div class=" border bg-gray-100 p-2 w-full h-auto items-center justify-end flex space-x-2">
 
-            <button class="bg-blue-600 hover:bg-blue-500 hover:shadow-md px-4 py-2 rounded-md text-white  " onclick="downloadOne('${URL.createObjectURL(blob)}')">
+            <button class="bg-blue-600 hover:bg-blue-500 hover:shadow-md px-4 py-2 rounded-md text-white  " onclick="downloadOne('${URL.createObjectURL(blob)}', '${inputFile.name}')">
                 Download
             </button>
             <button class="bg-red-600 hover:bg-red-500 hover:shadow-md px-4 py-2 rounded-md text-white  " onclick="removeItem(this)">
