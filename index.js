@@ -31,6 +31,8 @@ function Comprimir() {
 }
 
 function Render(inputFiles){
+    console.log('@@@')
+    console.log(inputFiles)
     try{
         let reader = new FileReader();
         reader.onload = function(event) {
@@ -71,7 +73,7 @@ function Render(inputFiles){
                     percentage = ((weightOriginal - weightCompact) / weightOriginal) * 100;
                     
                     // Adicionando a imagem compactada ao array
-                    imagens.push(blob)
+                    imagens.push({blob:blob, name: inputFiles.name})
                     
                     console.log('Tamanho da imagem comprimida: ' + fileSizeInKB.toFixed(2) + ' KB');
                     console.log('Compactação: ' + percentage.toFixed(2) + ' %');
@@ -93,9 +95,10 @@ function Download(){
         if(imagens.length > 0){
 
             imagens.forEach((e)=>{
+                console.log(imagens)
                 let downloadLink = document.createElement('a');
-                downloadLink.href = URL.createObjectURL(e);
-                downloadLink.download = fileName;
+                downloadLink.href = URL.createObjectURL(e.blob);
+                downloadLink.download = e.name;
                 downloadLink.click();
     
             })
