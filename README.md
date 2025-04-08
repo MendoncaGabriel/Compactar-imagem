@@ -1,3 +1,5 @@
+#COMPRESSÃO GRATUITA DE IMAGENS
+
 Este projeto é uma aplicação web desenvolvida para comprimir imagens de forma eficiente, mantendo a qualidade visual.
 
 ## Funcionalidades
